@@ -1,4 +1,4 @@
-const Inventory = require('./models/inventory')
+const Inventory = require('../models/inventory')
 const express = require('express')
 const router = express.Router()
 
@@ -14,7 +14,7 @@ router.get('/', async(req,res)=>{
 })
 
 router.put('/:id', async(req, res)=>{
-    const inventory = await Inventory.findByIdAndUpdate(req.params.id,{name: req.body.name, description: req.body.description, quantity:req.body.quantity})
+    const inventory = await Inventory.findByIdAndUpdate(req.params.id,{name: req.body.name, description: req.body.description, quantity:req.body.quantity, price:req.body.price})
     if(!inventory){
         return res.send({error: 'Inventory nt found'}).status(404)
     }
