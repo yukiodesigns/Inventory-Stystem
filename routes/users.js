@@ -61,4 +61,5 @@ router.post('/logout',authenticateUser, async(req, res)=>{
     }
 })
 
-module.exports = router
+module.exports.Router = router
+module.exports.authenticate = authenticateUser
