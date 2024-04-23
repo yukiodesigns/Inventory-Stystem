@@ -1,17 +1,23 @@
 const User = require('../models/user')
 const express = require('express')
 const router = express.Router()
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken');
 const SECRET_KEY = 'yukiisavibe'
 
 
 const authenticateUser = async(req, res, next)=>{
     try{
-        const token = req.header('Authorization').replace('Bearer', ' ')
+        const authHeader  = req.header('Authorization')
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            throw new Error('Authentication failed');
+          }
+        const token = authHeader.replace('Bearer ', '');
         const decoded = jwt.verify(token, SECRET_KEY)
         const user = await User.findOne({_id: decoded._id, 'tokens.token': token})
         
         if(!user){
-            throw new Error()
+            throw new Error('Authentication failed')
         }
         req.user = user
         req.token = token
@@ -42,7 +48,7 @@ router.post('/login', async(req, res)=>{
             throw new Error()
         }
         const token = jwt.sign({_id: user._id.toString()}, SECRET_KEY)
-        user.tokens = user.tokens.concat({token})
+        user.tokens.push({token})
         await user.save()
         res.send({user, token})
 
